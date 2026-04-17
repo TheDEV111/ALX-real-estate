@@ -1,59 +1,14 @@
-
-
+import Logo from "./logo";
+import Search from "./Search";
 function Navbar() {
   return (
-    <div className="flex justify-around">
-      <svg
-        width="59"
-        height="31"
-        viewBox="0 0 59 31"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M21.6453 19.7793C21.6453 25.7565 16.7998 30.602 10.8227 30.602C4.84547 30.602 0 25.7565 0 19.7793C0 13.8021 4.84547 8.95668 10.8227 8.95668C16.7998 8.95668 21.6453 13.8021 21.6453 19.7793ZM7.11699 19.7793C7.11699 21.8259 8.77607 23.485 10.8227 23.485C12.8692 23.485 14.5283 21.8259 14.5283 19.7793C14.5283 17.7328 12.8692 16.0737 10.8227 16.0737C8.77607 16.0737 7.11699 17.7328 7.11699 19.7793Z"
-          fill="#262626"
-        />
-        <path
-          d="M14.9278 8.95668H22.3917V30.602H14.9278V8.95668Z"
-          fill="#262626"
-        />
-        <path
-          d="M26.1237 3.73195L33.5876 0V30.602H26.1237V3.73195Z"
-          fill="#262626"
-        />
-        <path
-          d="M53.3316 4.46298C53.6288 4.17729 54.1013 4.18658 54.387 4.48374L58.5254 8.78817C58.8111 9.08532 58.8018 9.55782 58.5046 9.84352L41.9211 25.7874C41.6239 26.073 41.1514 26.0638 40.8657 25.7666L36.7273 21.4622C36.4416 21.165 36.4509 20.6925 36.7481 20.4068L53.3316 4.46298Z"
-          fill="#262626"
-        />
-        <path
-          d="M58.3926 20.6314C58.6838 20.9232 58.6833 21.3958 58.3915 21.6869L54.1647 25.9046C53.8729 26.1957 53.4003 26.1952 53.1091 25.9034L36.8599 9.61898C36.5687 9.32718 36.5693 8.8546 36.8611 8.56343L41.0878 4.34578C41.3796 4.05462 41.8522 4.05513 42.1434 4.34693L58.3926 20.6314Z"
-          fill="#262626"
-        />
-      </svg>
-      <div className="border border-gray-200 flex ">
-        <div>
-          <p>Location</p>
-          <input type="text" />
-        </div>
-        <div>
-          <p>Check In</p>
-          <input type="text" />
-        </div>
-        <div>
-          <p>Check out</p>
-          <input type="text" />
-        </div>
-        <div>
-          <div>
-            <p>People</p>
-            <input type="text" />
-          </div>
-          <div className="bg-[#FFA800] w-<40px>"></div>
-        </div>
+    <nav className="fixed w-full bg-white shadow-sm ">
+      <div className="flex justify-center align-center gap-6 max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4 py-4">
+        <Logo />
+        <Search />
       </div>
-    </div>
+    </nav>
   );
 }
 
-export default Navbar
+export default Navbar;

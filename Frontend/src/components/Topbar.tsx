@@ -1,7 +1,7 @@
 
 function Topbar() {
   return (
-    <div className="bg-[#34967C] flex items-center justify-center text-white p-3 gap-4">
+    <div className=" bg-[#34967C] flex items-center justify-center text-white p-2 gap-4 z-10">
       <svg
         width="24"
         height="24"
