@@ -3,7 +3,7 @@ import Search from "./Search";
 import { Button } from "./Button";
 function Navbar() {
   return (
-    <nav className="fixed w-full bg-white shadow-sm ">
+    <nav className="sticky top-0 w-full bg-white shadow-sm ">
       <div className="flex justify-center align-center gap-6 px-4 py-4">
         <Logo />
         <Search />
