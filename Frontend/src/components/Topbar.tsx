@@ -1,3 +1,5 @@
+import { Button } from "./Button";
+
 
 function Topbar() {
   return (
@@ -39,8 +41,12 @@ function Topbar() {
         />
       </svg>
 
-      <p className="text-base">Overseas trip? Get the latest information on travel guides</p>
-      <button className="bg-black px-2 py-1.5 rounded-4xl text-sm cursor-pointer">More Info</button>
+      <p className="text-base">
+        Overseas trip? Get the latest information on travel guides
+      </p>
+      <Button className="bg-[#161117] w-[86px] h-[30px] py-[6px] px-[11px] rounded-4xl text-[14px] font-[500] text-center">
+        More Info{" "}
+      </Button>
     </div>
   );
 }
