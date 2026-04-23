@@ -44,7 +44,7 @@ function Topbar() {
       <p className="text-base">
         Overseas trip? Get the latest information on travel guides
       </p>
-      <Button className="bg-[#161117] w-[86px] h-[30px] py-[6px] px-[11px] rounded-4xl text-[14px] font-[500] text-center">
+      <Button className="bg-[#161117] w-[86px] h-[30px] py-[6px] px-[11px] rounded-4xl text-[14px] font-[500] text-center hover:bg-gray-800 hover:shadow-md transition-all duration-200">
         More Info{" "}
       </Button>
     </div>
