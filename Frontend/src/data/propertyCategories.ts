@@ -1,5 +1,10 @@
+interface PropertyCategory {
+  id: number;
+  name: string;
+  icon: string;
+}
 
-export const propertyCategories = [
+export const propertyCategories: PropertyCategory[] = [
   { id: 1, name: "Rooms", icon: "/categoriesIcons/living-room.svg" },
   { id: 2, name: "Mansion", icon: "/categoriesIcons/mansion.svg" },
   { id: 3, name: "Countryside", icon: "/categoriesIcons/farm.svg" },

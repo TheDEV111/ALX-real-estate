@@ -1,17 +1,19 @@
 import Topbar from "../components/Topbar";
 import Navbar from "../components/Navbar";
 import PropertyTypeFilter from "../components/PropertyTypeFilter";
+import Hero from "../components/Hero";
 
 function Homepage() {
   return (
-    <div>
-      <Topbar />
-      <Navbar />
-      
-        
+    
+      <div className="">
+        <Topbar />
+        <Navbar />
+
         <PropertyTypeFilter />
-     
-    </div>
+        <Hero />
+      </div>
+    
   );
 }
 

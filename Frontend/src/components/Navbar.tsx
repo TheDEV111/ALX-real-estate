@@ -4,7 +4,7 @@ import { Button } from "./Button";
 
 function Navbar() {
   return (
-    <nav className="sticky top-0 w-full bg-white shadow-sm ">
+    <nav className="sticky top-0 w-full bg-white shadow-sm font-[Quicksand] ">
       <div className="flex items-center gap-8 px-8 py-4">
         <Logo />
         <div className="flex-1 flex justify-center">
