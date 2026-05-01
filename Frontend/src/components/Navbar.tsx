@@ -12,10 +12,10 @@ function Navbar() {
         </div>
 
         <div className="flex items-center gap-4 shrink-0">
-          <Button className="bg-[#34967C] text-white rounded-full px-6 hover:bg-[#2a7a65] transition-colors">
+          <Button className="bg-[#34967C] text-white rounded-full px-6 hover:bg-[#2a7a65] transition-colors w-25 h-10 ">
             Sign In
           </Button>
-          <Button className="border border-[#ECECEC] px-6 hover:bg-gray-50 transition-colors">
+          <Button className="border border-[#ECECEC] px-6 hover:bg-gray-50 w-25 h-10 rounded-full transition-colors">
             Sign Up
           </Button>
         </div>
