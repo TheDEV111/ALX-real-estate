@@ -1,0 +1,846 @@
+openapi: 3.0.3
+
+info:
+  title: ALX Real Estate API
+  description: REST API for ALX Real Estate — an Airbnb-style property marketplace
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/api
+    description: Local development
+
+tags:
+  - name: System
+  - name: Auth
+  - name: Listings
+  - name: Bookings
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: resource not found
+        detail:
+          type: string
+          example: additional context
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+        role:
+          type: string
+          enum: [guest, host, admin]
+        avatar_url:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    AuthResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: JWT valid for 15 minutes. Send as Authorization Bearer token on protected routes.
+        user:
+          $ref: '#/components/schemas/User'
+
+    Listing:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        host_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        property_type:
+          type: string
+          enum: [apartment, house, villa, cabin, studio]
+        country:
+          type: string
+        city:
+          type: string
+        address:
+          type: string
+        latitude:
+          type: number
+          nullable: true
+        longitude:
+          type: number
+          nullable: true
+        price_per_night:
+          type: number
+          example: 120.00
+        currency:
+          type: string
+          example: USD
+        max_guests:
+          type: integer
+        bedrooms:
+          type: integer
+        bathrooms:
+          type: number
+        amenities:
+          type: array
+          items:
+            type: string
+          example: [wifi, pool, kitchen]
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreateListingRequest:
+      type: object
+      required:
+        - title
+        - description
+        - property_type
+        - country
+        - city
+        - address
+        - price_per_night
+        - max_guests
+        - bedrooms
+        - bathrooms
+      properties:
+        title:
+          type: string
+          example: Cozy beachfront apartment
+        description:
+          type: string
+          example: A beautiful apartment steps from the beach
+        property_type:
+          type: string
+          enum: [apartment, house, villa, cabin, studio]
+        country:
+          type: string
+          example: Ghana
+        city:
+          type: string
+          example: Accra
+        address:
+          type: string
+          example: 14 Liberation Road
+        latitude:
+          type: number
+          example: 5.5502
+        longitude:
+          type: number
+          example: -0.2174
+        price_per_night:
+          type: number
+          example: 85.00
+        currency:
+          type: string
+          default: USD
+        max_guests:
+          type: integer
+          example: 4
+        bedrooms:
+          type: integer
+          example: 2
+        bathrooms:
+          type: number
+          example: 1.5
+        amenities:
+          type: array
+          items:
+            type: string
+          example: [wifi, air_conditioning, kitchen]
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+
+    UpdateListingRequest:
+      type: object
+      description: All fields are optional. Only provided fields are updated.
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        property_type:
+          type: string
+          enum: [apartment, house, villa, cabin, studio]
+        country:
+          type: string
+        city:
+          type: string
+        address:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        price_per_night:
+          type: number
+        currency:
+          type: string
+        max_guests:
+          type: integer
+        bedrooms:
+          type: integer
+        bathrooms:
+          type: number
+        amenities:
+          type: array
+          items:
+            type: string
+        images:
+          type: array
+          items:
+            type: string
+        is_active:
+          type: boolean
+
+    ListingsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Listing'
+        total:
+          type: integer
+          description: Total number of listings matching the filters (ignores pagination)
+        limit:
+          type: integer
+        offset:
+          type: integer
+
+    Booking:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        listing_id:
+          type: string
+          format: uuid
+        guest_id:
+          type: string
+          format: uuid
+        check_in:
+          type: string
+          format: date
+          example: "2025-12-01"
+        check_out:
+          type: string
+          format: date
+          example: "2025-12-07"
+        total_nights:
+          type: integer
+          example: 6
+        total_price:
+          type: number
+          example: 720.00
+        status:
+          type: string
+          enum: [pending, confirmed, cancelled, completed]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreateBookingRequest:
+      type: object
+      required: [listing_id, check_in, check_out]
+      properties:
+        listing_id:
+          type: string
+          format: uuid
+        check_in:
+          type: string
+          format: date
+          example: "2025-12-01"
+        check_out:
+          type: string
+          format: date
+          example: "2025-12-07"
+
+    BookingsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Booking'
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      tags: [System]
+      responses:
+        '200':
+          description: Service is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, full_name]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: henry@example.com
+                password:
+                  type: string
+                  minLength: 6
+                  example: securepassword
+                full_name:
+                  type: string
+                  example: Henry Doe
+      responses:
+        '201':
+          description: User registered. Refresh token set as HttpOnly cookie.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '409':
+          description: Email already in use
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      summary: Login with email and password
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: henry@example.com
+                password:
+                  type: string
+                  example: securepassword
+      responses:
+        '200':
+          description: Login successful. Refresh token set as HttpOnly cookie.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/refresh:
+    post:
+      summary: Refresh access token
+      tags: [Auth]
+      description: >
+        Uses the `refresh_token` HttpOnly cookie set during login/register.
+        No request body needed — the browser sends the cookie automatically.
+        Returns a new access token and rotates the refresh token cookie.
+      responses:
+        '200':
+          description: New access token issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Missing or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users/me:
+    get:
+      summary: Get the currently authenticated user
+      tags: [Auth]
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Current user identity from JWT claims
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  email:
+                    type: string
+                  role:
+                    type: string
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /listings:
+    get:
+      summary: Search and list properties
+      description: >
+        All filters are optional and combinable.
+        Results are ranked by full-text relevance when `q` is provided, otherwise by newest first.
+        Provide both `check_in` and `check_out` to exclude already-booked listings.
+      tags: [Listings]
+      parameters:
+        - name: q
+          in: query
+          description: Full-text search across title, description, city, and country
+          schema:
+            type: string
+          example: beach apartment accra
+        - name: city
+          in: query
+          schema:
+            type: string
+          example: Accra
+        - name: min_price
+          in: query
+          schema:
+            type: number
+          example: 50
+        - name: max_price
+          in: query
+          schema:
+            type: number
+          example: 300
+        - name: guests
+          in: query
+          description: Minimum guest capacity
+          schema:
+            type: integer
+          example: 2
+        - name: amenities
+          in: query
+          description: Filter by required amenities (all must be present)
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          example: [wifi, pool]
+        - name: check_in
+          in: query
+          description: "Date format: YYYY-MM-DD"
+          schema:
+            type: string
+            format: date
+          example: "2025-12-01"
+        - name: check_out
+          in: query
+          description: "Date format: YYYY-MM-DD"
+          schema:
+            type: string
+            format: date
+          example: "2025-12-07"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Paginated listings result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListingsResponse'
+
+    post:
+      summary: Create a new listing
+      tags: [Listings]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateListingRequest'
+      responses:
+        '201':
+          description: Listing created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Listing'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /listings/{id}:
+    get:
+      summary: Get a single listing by ID
+      tags: [Listings]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Listing found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Listing'
+        '404':
+          description: Listing not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    patch:
+      summary: Partially update a listing
+      description: Only the listing owner or an admin can update. All body fields are optional.
+      tags: [Listings]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateListingRequest'
+      responses:
+        '200':
+          description: Updated listing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Listing'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden — caller is not the listing owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Listing not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Delete a listing
+      description: Only the listing owner or an admin can delete. Also deletes all associated bookings (cascade).
+      tags: [Listings]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Listing deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: listing deleted
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Listing not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /bookings:
+    post:
+      summary: Create a booking
+      description: >
+        Fetches the listing's price_per_night and calculates total_price automatically.
+        Returns 409 if the listing is already booked for the requested dates.
+      tags: [Bookings]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookingRequest'
+      responses:
+        '201':
+          description: Booking created with status pending
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Listing not found or inactive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Listing already booked for these dates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation error (missing fields, past date, check_out before check_in)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      summary: List my bookings
+      description: Returns all bookings where the authenticated user is the guest.
+      tags: [Bookings]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Paginated list of bookings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingsResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /bookings/{id}:
+    get:
+      summary: Get a booking by ID
+      description: Only the guest who made the booking or an admin can view it.
+      tags: [Bookings]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Booking found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden — not the guest or admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Booking not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /bookings/{id}/cancel:
+    patch:
+      summary: Cancel a booking
+      description: >
+        Only the guest or an admin can cancel.
+        Returns 409 if the booking is already cancelled or completed.
+      tags: [Bookings]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Booking cancelled — returns the updated booking
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Booking not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Booking is already cancelled or completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

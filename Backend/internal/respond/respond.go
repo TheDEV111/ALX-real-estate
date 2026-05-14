@@ -1,4 +1,4 @@
-package server
+package respond
 
 import (
 	"encoding/json"
@@ -23,18 +23,18 @@ var (
 	ErrInvalidInput = &AppError{Code: http.StatusUnprocessableEntity, Message: "invalid input"}
 )
 
-func RespondJSON(w http.ResponseWriter, status int, payload any) {
+func JSON(w http.ResponseWriter, status int, payload any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(payload)
 }
 
-func RespondError(w http.ResponseWriter, err error) {
+func Error(w http.ResponseWriter, err error) {
 	var appErr *AppError
 	if errors.As(err, &appErr) {
-		RespondJSON(w, appErr.Code, appErr)
+		JSON(w, appErr.Code, appErr)
 		return
 	}
 	log.Printf("internal error: %v", err)
-	RespondJSON(w, http.StatusInternalServerError, &AppError{Message: "internal server error"})
+	JSON(w, http.StatusInternalServerError, &AppError{Message: "internal server error"})
 }
