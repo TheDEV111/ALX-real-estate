@@ -1,15 +1,24 @@
 import Logo from "./Logo";
 import Search from "./Search";
 import { Button } from "./Button";
+
 function Navbar() {
   return (
-    <nav className="fixed w-full bg-white shadow-sm ">
-      <div className="flex justify-center align-center gap-6 px-4 py-4">
+    <nav className="sticky top-0 w-full bg-white shadow-sm font-[Quicksand] ">
+      <div className="flex items-center gap-8 px-8 py-4">
         <Logo />
-        <Search />
+        <div className="flex-1 flex justify-center">
+          <Search />
+        </div>
 
-        <Button className=" bg-[#34967C] text-white">Sign In</Button>
-        <Button className="border border-[#ECECEC]">Sign Up</Button>
+        <div className="flex items-center gap-4 shrink-0">
+          <Button className="bg-[#34967C] text-white rounded-full px-6 hover:bg-[#2a7a65] transition-colors w-25 h-10 ">
+            Sign In
+          </Button>
+          <Button className="border border-[#ECECEC] px-6 hover:bg-gray-50 w-25 h-10 rounded-full transition-colors">
+            Sign Up
+          </Button>
+        </div>
       </div>
     </nav>
   );
