@@ -74,6 +74,9 @@ func (s *Service) Search(ctx context.Context, p SearchParams) (*ListingsResponse
 	if p.Limit > 100 {
 		p.Limit = 100
 	}
+	if p.Offset < 0 {
+		p.Offset = 0
+	}
 
 	listings, total, err := s.repo.Search(ctx, p)
 	if err != nil {
@@ -85,6 +88,7 @@ func (s *Service) Search(ctx context.Context, p SearchParams) (*ListingsResponse
 		Total:  total,
 		Limit:  p.Limit,
 		Offset: p.Offset,
+		Page:   p.Offset/p.Limit + 1,
 	}, nil
 }
 

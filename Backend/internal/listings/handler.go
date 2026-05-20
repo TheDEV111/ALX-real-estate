@@ -19,6 +19,15 @@ func NewHandler(svc *Service) *Handler {
 }
 
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
+	limit := intOrDefault(r.URL.Query().Get("limit"), 20)
+	offset := intOrDefault(r.URL.Query().Get("offset"), 0)
+
+	if pageStr := r.URL.Query().Get("page"); pageStr != "" {
+		if page := intOrDefault(pageStr, 1); page > 0 {
+			offset = (page - 1) * limit
+		}
+	}
+
 	p := SearchParams{
 		Query:    nullableString(r.URL.Query().Get("q")),
 		City:     nullableString(r.URL.Query().Get("city")),
@@ -27,8 +36,8 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 		Guests:   nullableInt(r.URL.Query().Get("guests")),
 		CheckIn:  nullableString(r.URL.Query().Get("check_in")),
 		CheckOut: nullableString(r.URL.Query().Get("check_out")),
-		Limit:    intOrDefault(r.URL.Query().Get("limit"), 20),
-		Offset:   intOrDefault(r.URL.Query().Get("offset"), 0),
+		Limit:    limit,
+		Offset:   offset,
 	}
 
 	if amenities := r.URL.Query()["amenities"]; len(amenities) > 0 {
@@ -62,7 +71,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	var req CreateListingRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		respond.Error(w, respond.ErrInvalidInput)
+		respond.Error(w, err)
 		return
 	}
 
@@ -85,7 +94,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 
 	var req UpdateListingRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		respond.Error(w, respond.ErrInvalidInput)
+		respond.Error(w, err)
 		return
 	}
 

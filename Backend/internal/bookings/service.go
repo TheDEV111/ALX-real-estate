@@ -100,6 +100,38 @@ func (s *Service) ListMine(ctx context.Context, guestID string, limit, offset in
 	}, nil
 }
 
+func (s *Service) ListForListing(ctx context.Context, listingID, requesterID, requesterRole string, limit, offset int) (*BookingsResponse, error) {
+	listing, err := s.listingsRepo.GetByID(ctx, listingID)
+	if err != nil {
+		return nil, err
+	}
+	if listing == nil {
+		return nil, respond.ErrNotFound
+	}
+	if listing.HostID != requesterID && requesterRole != "admin" {
+		return nil, respond.ErrForbidden
+	}
+
+	if limit <= 0 {
+		limit = 20
+	}
+	if limit > 100 {
+		limit = 100
+	}
+
+	bookings, total, err := s.repo.ListByListing(ctx, listingID, limit, offset)
+	if err != nil {
+		return nil, fmt.Errorf("list listing bookings: %w", err)
+	}
+
+	return &BookingsResponse{
+		Data:   bookings,
+		Total:  total,
+		Limit:  limit,
+		Offset: offset,
+	}, nil
+}
+
 func (s *Service) Cancel(ctx context.Context, id, requesterID, requesterRole string) (*Booking, error) {
 	b, err := s.repo.GetByID(ctx, id)
 	if err != nil {

@@ -19,7 +19,7 @@ func NewHandler(svc *Service) *Handler {
 func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	var req RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		respond.Error(w, respond.ErrInvalidInput)
+		respond.Error(w, err)
 		return
 	}
 	if req.Email == "" || req.Password == "" || req.FullName == "" {
@@ -40,7 +40,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	var req LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		respond.Error(w, respond.ErrInvalidInput)
+		respond.Error(w, err)
 		return
 	}
 

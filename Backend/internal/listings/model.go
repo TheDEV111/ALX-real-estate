@@ -80,4 +80,5 @@ type ListingsResponse struct {
 	Total  int       `json:"total"`
 	Limit  int       `json:"limit"`
 	Offset int       `json:"offset"`
+	Page   int       `json:"page"`
 }

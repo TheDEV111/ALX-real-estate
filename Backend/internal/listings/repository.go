@@ -132,6 +132,27 @@ func (r *Repository) Search(ctx context.Context, p SearchParams) ([]Listing, int
 	if results == nil {
 		results = []Listing{}
 	}
+
+	if len(results) == 0 && p.Offset > 0 {
+		countQuery := `
+			SELECT COUNT(*) FROM listings
+			WHERE is_active = TRUE
+			  AND ($1::text IS NULL OR search_vector @@ plainto_tsquery('english', $1))
+			  AND ($2::text IS NULL OR city ILIKE '%' || $2 || '%')
+			  AND ($3::numeric IS NULL OR price_per_night >= $3)
+			  AND ($4::numeric IS NULL OR price_per_night <= $4)
+			  AND ($5::int IS NULL OR max_guests >= $5)
+			  AND ($6::text[] IS NULL OR amenities @> $6)
+		`
+		var amenities interface{}
+		if len(p.Amenities) > 0 {
+			amenities = p.Amenities
+		}
+		r.pool.QueryRow(ctx, countQuery,
+			p.Query, p.City, p.MinPrice, p.MaxPrice, p.Guests, amenities,
+		).Scan(&total)
+	}
+
 	return results, total, nil
 }
 

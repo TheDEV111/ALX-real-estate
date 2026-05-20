@@ -10,6 +10,7 @@ import (
 	"github.com/TheDEV111/ALX-real-estate/backend/internal/config"
 	"github.com/TheDEV111/ALX-real-estate/backend/internal/db"
 	"github.com/TheDEV111/ALX-real-estate/backend/internal/listings"
+	"github.com/TheDEV111/ALX-real-estate/backend/internal/reviews"
 	"github.com/TheDEV111/ALX-real-estate/backend/internal/server"
 )
 
@@ -46,7 +47,11 @@ func main() {
 	bookingsSvc := bookings.NewService(bookingsRepo, listingsRepo)
 	bookingsHandler := bookings.NewHandler(bookingsSvc)
 
-	router := server.NewRouter(cfg, authHandler, authMiddleware, listingsHandler, bookingsHandler)
+	reviewsRepo := reviews.NewRepository(pool)
+	reviewsSvc := reviews.NewService(reviewsRepo, bookingsRepo)
+	reviewsHandler := reviews.NewHandler(reviewsSvc)
+
+	router := server.NewRouter(cfg, authHandler, authMiddleware, listingsHandler, bookingsHandler, reviewsHandler)
 
 	log.Printf("server listening on :%s", cfg.Port)
 	if err := http.ListenAndServe(":"+cfg.Port, router); err != nil {

@@ -1,0 +1,53 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - 'Backend/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: alx
+          POSTGRES_PASSWORD: alxpassword
+          POSTGRES_DB: alx_real_estate
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U alx -d alx_real_estate"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    defaults:
+      run:
+        working-directory: Backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.18'
+          cache-dependency-path: Backend/go.sum
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Build
+        run: go build ./...
+
+      - name: Run integration tests
+        env:
+          TEST_DATABASE_URL: postgres://alx:alxpassword@localhost:5432/alx_real_estate?sslmode=disable
+          JWT_SECRET: ci-test-secret-key-at-least-32-chars
+          JWT_REFRESH_SECRET: ci-test-refresh-secret-key-at-least-32-chars
+          DISABLE_RATE_LIMIT: "true"
+        run: go test ./tests/... -v -timeout 120s

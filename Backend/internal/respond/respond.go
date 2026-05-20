@@ -16,11 +16,12 @@ type AppError struct {
 func (e *AppError) Error() string { return e.Message }
 
 var (
-	ErrNotFound     = &AppError{Code: http.StatusNotFound, Message: "resource not found"}
-	ErrUnauthorized = &AppError{Code: http.StatusUnauthorized, Message: "unauthorized"}
-	ErrForbidden    = &AppError{Code: http.StatusForbidden, Message: "forbidden"}
-	ErrConflict     = &AppError{Code: http.StatusConflict, Message: "resource conflict"}
-	ErrInvalidInput = &AppError{Code: http.StatusUnprocessableEntity, Message: "invalid input"}
+	ErrNotFound      = &AppError{Code: http.StatusNotFound, Message: "resource not found"}
+	ErrUnauthorized  = &AppError{Code: http.StatusUnauthorized, Message: "unauthorized"}
+	ErrForbidden     = &AppError{Code: http.StatusForbidden, Message: "forbidden"}
+	ErrConflict      = &AppError{Code: http.StatusConflict, Message: "resource conflict"}
+	ErrInvalidInput  = &AppError{Code: http.StatusUnprocessableEntity, Message: "invalid input"}
+	ErrPayloadTooBig = &AppError{Code: http.StatusRequestEntityTooLarge, Message: "request body too large"}
 )
 
 func JSON(w http.ResponseWriter, status int, payload any) {
@@ -33,6 +34,10 @@ func Error(w http.ResponseWriter, err error) {
 	var appErr *AppError
 	if errors.As(err, &appErr) {
 		JSON(w, appErr.Code, appErr)
+		return
+	}
+	if err.Error() == "http: request body too large" {
+		JSON(w, http.StatusRequestEntityTooLarge, ErrPayloadTooBig)
 		return
 	}
 	log.Printf("internal error: %v", err)

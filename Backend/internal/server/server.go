@@ -10,6 +10,7 @@ import (
 	"github.com/TheDEV111/ALX-real-estate/backend/internal/docs"
 	"github.com/TheDEV111/ALX-real-estate/backend/internal/listings"
 	"github.com/TheDEV111/ALX-real-estate/backend/internal/respond"
+	"github.com/TheDEV111/ALX-real-estate/backend/internal/reviews"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -22,6 +23,7 @@ func NewRouter(
 	authMiddleware func(http.Handler) http.Handler,
 	listingsHandler *listings.Handler,
 	bookingsHandler *bookings.Handler,
+	reviewsHandler *reviews.Handler,
 ) http.Handler {
 	r := chi.NewRouter()
 
@@ -29,6 +31,12 @@ func NewRouter(
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
+	r.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			r.Body = http.MaxBytesReader(w, r.Body, 1<<20)
+			next.ServeHTTP(w, r)
+		})
+	})
 
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{cfg.FrontendURL},
@@ -62,6 +70,7 @@ func NewRouter(
 
 		r.Get("/listings", listingsHandler.List)
 		r.Get("/listings/{id}", listingsHandler.GetByID)
+		r.Get("/listings/{id}/reviews", reviewsHandler.ListForListing)
 
 		r.Group(func(r chi.Router) {
 			r.Use(authMiddleware)
@@ -71,11 +80,13 @@ func NewRouter(
 			r.Post("/listings", listingsHandler.Create)
 			r.Patch("/listings/{id}", listingsHandler.Update)
 			r.Delete("/listings/{id}", listingsHandler.Delete)
+			r.Get("/listings/{id}/bookings", bookingsHandler.ListForListing)
 
 			r.Post("/bookings", bookingsHandler.Create)
 			r.Get("/bookings", bookingsHandler.ListMine)
 			r.Get("/bookings/{id}", bookingsHandler.GetByID)
 			r.Patch("/bookings/{id}/cancel", bookingsHandler.Cancel)
+			r.Post("/bookings/{id}/review", reviewsHandler.Create)
 		})
 	})
 

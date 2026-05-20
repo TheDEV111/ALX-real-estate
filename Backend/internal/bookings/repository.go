@@ -119,6 +119,48 @@ func (r *Repository) ListByGuest(ctx context.Context, guestID string, limit, off
 	return results, total, nil
 }
 
+func (r *Repository) ListByListing(ctx context.Context, listingID string, limit, offset int) ([]Booking, int, error) {
+	query := `
+		SELECT id, listing_id, guest_id, check_in, check_out,
+		       (check_out - check_in) AS total_nights, total_price, status, created_at, updated_at,
+		       COUNT(*) OVER() AS total_count
+		FROM bookings
+		WHERE listing_id = $1
+		ORDER BY check_in ASC
+		LIMIT $2 OFFSET $3
+	`
+	rows, err := r.pool.Query(ctx, query, listingID, limit, offset)
+	if err != nil {
+		return nil, 0, fmt.Errorf("ListByListing: %w", err)
+	}
+	defer rows.Close()
+
+	var results []Booking
+	var total int
+
+	for rows.Next() {
+		b := Booking{}
+		var checkIn, checkOut time.Time
+		err := rows.Scan(
+			&b.ID, &b.ListingID, &b.GuestID,
+			&checkIn, &checkOut, &b.TotalNights,
+			&b.TotalPrice, &b.Status, &b.CreatedAt, &b.UpdatedAt,
+			&total,
+		)
+		if err != nil {
+			return nil, 0, fmt.Errorf("ListByListing scan: %w", err)
+		}
+		b.CheckIn = checkIn.Format("2006-01-02")
+		b.CheckOut = checkOut.Format("2006-01-02")
+		results = append(results, b)
+	}
+
+	if results == nil {
+		results = []Booking{}
+	}
+	return results, total, nil
+}
+
 func (r *Repository) Cancel(ctx context.Context, id string) error {
 	query := `UPDATE bookings SET status = 'cancelled', updated_at = NOW() WHERE id = $1`
 	_, err := r.pool.Exec(ctx, query, id)

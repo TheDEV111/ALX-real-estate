@@ -14,6 +14,7 @@ import (
 	"github.com/TheDEV111/ALX-real-estate/backend/internal/config"
 	"github.com/TheDEV111/ALX-real-estate/backend/internal/db"
 	"github.com/TheDEV111/ALX-real-estate/backend/internal/listings"
+	"github.com/TheDEV111/ALX-real-estate/backend/internal/reviews"
 	"github.com/TheDEV111/ALX-real-estate/backend/internal/server"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
@@ -56,7 +57,11 @@ func TestMain(m *testing.M) {
 	bookingsSvc := bookings.NewService(bookingsRepo, listingsRepo)
 	bookingsHandler := bookings.NewHandler(bookingsSvc)
 
-	router := server.NewRouter(cfg, authHandler, authMiddleware, listingsHandler, bookingsHandler)
+	reviewsRepo := reviews.NewRepository(pool)
+	reviewsSvc := reviews.NewService(reviewsRepo, bookingsRepo)
+	reviewsHandler := reviews.NewHandler(reviewsSvc)
+
+	router := server.NewRouter(cfg, authHandler, authMiddleware, listingsHandler, bookingsHandler, reviewsHandler)
 	testServer = httptest.NewServer(router)
 
 	code := m.Run()
@@ -69,7 +74,7 @@ func TestMain(m *testing.M) {
 func truncate(t *testing.T) {
 	t.Helper()
 	_, err := testPool.Exec(context.Background(),
-		"TRUNCATE bookings, listings, users CASCADE")
+		"TRUNCATE reviews, bookings, listings, users CASCADE")
 	if err != nil {
 		t.Fatalf("truncate: %v", err)
 	}

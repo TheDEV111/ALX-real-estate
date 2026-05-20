@@ -27,7 +27,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	var req CreateBookingRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		respond.Error(w, respond.ErrInvalidInput)
+		respond.Error(w, err)
 		return
 	}
 
@@ -71,6 +71,25 @@ func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respond.JSON(w, http.StatusOK, booking)
+}
+
+func (h *Handler) ListForListing(w http.ResponseWriter, r *http.Request) {
+	claims, ok := auth.ClaimsFromContext(r.Context())
+	if !ok {
+		respond.Error(w, respond.ErrUnauthorized)
+		return
+	}
+
+	listingID := chi.URLParam(r, "id")
+	limit := intOrDefault(r.URL.Query().Get("limit"), 20)
+	offset := intOrDefault(r.URL.Query().Get("offset"), 0)
+
+	result, err := h.svc.ListForListing(r.Context(), listingID, claims.UserID, claims.Role, limit, offset)
+	if err != nil {
+		respond.Error(w, err)
+		return
+	}
+	respond.JSON(w, http.StatusOK, result)
 }
 
 func (h *Handler) Cancel(w http.ResponseWriter, r *http.Request) {
