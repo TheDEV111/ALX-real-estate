@@ -3,10 +3,9 @@ import { Button } from "./Button";
 
 function Topbar() {
   return (
-    <div className=" bg-[#34967C] flex items-center justify-center text-white p-2 gap-4 z-10 font-[Quicksand]">
+    <div className=" w-full bg-[#34967C] flex flex-wrap items-center justify-center text-white pt-6 pb-2 gap-4 font-[Quicksand]">
       <svg
-        width="24"
-        height="24"
+        className="w-4 h-4 md:w-[24px] md:h-[24px] flex-shrink-0"
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -41,10 +40,10 @@ function Topbar() {
         />
       </svg>
 
-      <p className="">
+      <p className="text-[10px] md:text-[12px] lg:text-[14px] ">
         Overseas trip? Get the latest information on travel guides
       </p>
-      <Button className="bg-[#161117] w-21.5 h-7.5 py-1.5 px-2.75 rounded-full text-[12px] font-medium text-center hover:bg-gray-800 hover:shadow-md transition-all duration-200">
+      <Button className="bg-[#000000] py-[6px] px-[8px] min-w-0 rounded-full text-[8px] md:text-[12px] font-medium text-center hover:bg-gray-800 hover:shadow-md transition-all duration-200">
         More Info
       </Button>
     </div>

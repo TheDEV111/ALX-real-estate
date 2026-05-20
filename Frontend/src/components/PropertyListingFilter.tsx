@@ -18,9 +18,9 @@ const PropertyListingFilter = () => {
           <Button
             key={option.id}
             onClick={() => setSelectedFilter(option.id)}
-            className={`px-4 h-8 rounded-full transition-colors whitespace-nowrap flex-shrink-0 ${
+            className={`px-4 h-8 rounded-full transition-colors whitespace-nowrap  shrink-0 ${
               selectedFilter === option.id
-                ? " text-[#34967C] border border-[#34967C]"
+                ? " text-[#34967C] bg-[#F0FFFB] border border-[#34967C]"
                 : "border border-[#ECECEC] text-gray-800 hover:bg-gray-100"
             }`}
           >
