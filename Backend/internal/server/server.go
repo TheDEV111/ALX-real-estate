@@ -39,7 +39,9 @@ func NewRouter(
 	}))
 
 	r.Use(middleware.Timeout(30 * time.Second))
-	r.Use(httprate.LimitByIP(100, time.Minute))
+	if !cfg.DisableRateLimit {
+		r.Use(httprate.LimitByIP(100, time.Minute))
+	}
 
 	r.Route("/api", func(r chi.Router) {
 		r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
@@ -50,7 +52,9 @@ func NewRouter(
 		r.Get("/docs/spec", docs.SpecHandler)
 
 		r.Group(func(r chi.Router) {
-			r.Use(httprate.LimitByIP(5, time.Minute))
+			if !cfg.DisableRateLimit {
+				r.Use(httprate.LimitByIP(5, time.Minute))
+			}
 			r.Post("/auth/register", authHandler.Register)
 			r.Post("/auth/login", authHandler.Login)
 			r.Post("/auth/refresh", authHandler.Refresh)

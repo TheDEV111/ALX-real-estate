@@ -13,11 +13,12 @@ type Config struct {
 	JWTRefreshSecret string
 	FrontendURL      string
 	Port             string
+	DisableRateLimit bool
 }
 
 func Load() (*Config, error) {
-	// Only load .env in local dev — in Docker the vars come from docker-compose
 	_ = godotenv.Load()
+	_ = godotenv.Load("../.env")
 
 	cfg := &Config{
 		DatabaseURL:      os.Getenv("DATABASE_URL"),
@@ -25,6 +26,7 @@ func Load() (*Config, error) {
 		JWTRefreshSecret: os.Getenv("JWT_REFRESH_SECRET"),
 		FrontendURL:      getEnvOrDefault("FRONTEND_URL", "http://localhost:5173"),
 		Port:             getEnvOrDefault("PORT", "8080"),
+		DisableRateLimit: os.Getenv("DISABLE_RATE_LIMIT") == "true",
 	}
 
 	if cfg.DatabaseURL == "" {

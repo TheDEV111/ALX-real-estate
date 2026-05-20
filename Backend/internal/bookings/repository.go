@@ -34,7 +34,7 @@ func (r *Repository) Create(ctx context.Context, b *Booking) error {
 	query := `
 		INSERT INTO bookings (listing_id, guest_id, check_in, check_out, total_price)
 		VALUES ($1, $2, $3, $4, $5)
-		RETURNING id, total_nights, status, created_at, updated_at
+		RETURNING id, (check_out - check_in) AS total_nights, status, created_at, updated_at
 	`
 	err = r.pool.QueryRow(ctx, query,
 		b.ListingID, b.GuestID, checkIn, checkOut, b.TotalPrice,
@@ -52,7 +52,8 @@ func (r *Repository) Create(ctx context.Context, b *Booking) error {
 
 func (r *Repository) GetByID(ctx context.Context, id string) (*Booking, error) {
 	query := `
-		SELECT id, listing_id, guest_id, check_in, check_out, total_nights, total_price, status, created_at, updated_at
+		SELECT id, listing_id, guest_id, check_in, check_out,
+		       (check_out - check_in) AS total_nights, total_price, status, created_at, updated_at
 		FROM bookings
 		WHERE id = $1
 	`
@@ -78,7 +79,8 @@ func (r *Repository) GetByID(ctx context.Context, id string) (*Booking, error) {
 
 func (r *Repository) ListByGuest(ctx context.Context, guestID string, limit, offset int) ([]Booking, int, error) {
 	query := `
-		SELECT id, listing_id, guest_id, check_in, check_out, total_nights, total_price, status, created_at, updated_at,
+		SELECT id, listing_id, guest_id, check_in, check_out,
+		       (check_out - check_in) AS total_nights, total_price, status, created_at, updated_at,
 		       COUNT(*) OVER() AS total_count
 		FROM bookings
 		WHERE guest_id = $1
