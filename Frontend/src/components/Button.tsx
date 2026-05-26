@@ -17,7 +17,7 @@ export const Button: React.FC<ButtonProps> = ({
     <button
       onClick={onClick}
       disabled={disabled || isLoading}
-      className={` cursor-pointer whitespace-nowrap rounded-full ${className}`}
+      className={` cursor-pointer text-center whitespace-nowrap rounded-full ${className}`}
     >
       {isLoading ? "Loading..." : children}
     </button>
