@@ -5,13 +5,18 @@ import { Button } from "./Button";
 function Navbar() {
   return (
     <nav className=" w-full bg-white shadow-sm font-[Quicksand] ">
-      <div className="flex items-center gap-8 px-8 py-4">
-        <Logo />
-        <div className="flex-1 flex justify-center">
-          <Search />
+      <div className=" flex items-center gap-8 px-8 py-4">
+        <div className="hidden md:block">
+          <Logo />
         </div>
 
-        <div className="flex items-center gap-4 shrink-0">
+        <div className=" ">
+          <Search />
+        </div>
+        <div>
+          
+</div>
+        <div className="hidden lg:flex items-center gap-4 ">
           <Button className="bg-[#34967C] text-white rounded-full px-6 hover:bg-[#2a7a65] transition-colors w-25 h-10 ">
             Sign In
           </Button>

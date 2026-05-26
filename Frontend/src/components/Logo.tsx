@@ -4,8 +4,8 @@ function logo() {
   return (
     <div className="cursor-pointer flex align-center">
       <svg
-        width="59"
-        height="31"
+        // className="w-[20px] h-[31px] md:w-[59px] md:h-[31px] "
+        className="w-[20px] h-[20px] md:w-[32px] md:h-[32px] lg:w-[56px] lg:h-[56px]"
         viewBox="0 0 59 31"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
