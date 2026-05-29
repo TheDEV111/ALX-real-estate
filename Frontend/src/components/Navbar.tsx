@@ -5,7 +5,7 @@ import { Button } from "./Button";
 function Navbar() {
   return (
     <nav className=" w-full bg-white shadow-sm font-[Quicksand] ">
-      <div className=" flex items-center gap-8 px-8 py-4">
+      <div className=" flex items-center gap-8 px-4 md:px-8 py-4 ">
         <div className="hidden md:block">
           <Logo />
         </div>

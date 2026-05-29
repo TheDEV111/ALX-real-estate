@@ -1,5 +1,6 @@
 
 import { propertyListings } from "../data/propertyListings";
+import { Button } from "./Button";
 import { PropertyCard } from "./PropertyCard";
 
 export const PropertyListings: React.FC = () => {
@@ -10,6 +11,13 @@ export const PropertyListings: React.FC = () => {
           <PropertyCard key={property.id} property={property} />
         ))}
       </div>
+      <div className="flex flex-col justify-center items-center p-[50px] font-[Quicksand] gap-[10px]  mt-[70px]">
+        <Button className="bg-[#161117] text-white px-[32px] py-[13px] font-medium text-[20px]">
+          Show more
+        </Button>
+        <p className="font-medium text-[20px]">Click to see more listings</p>
+      </div>
+      
     </div>
   );
 };
